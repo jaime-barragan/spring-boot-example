@@ -19,10 +19,19 @@ jobs:
       - name: Unit Tests
         run: |
           mvn test
-      - name: Pushing coverage reports to Codacy
+#      - name: Pushing coverage reports to Codacy
+#        run: |
+#          export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
+#          export CODACY_ORGANIZATION_PROVIDER=gh
+#          export CODACY_USERNAME=jaime-barragan
+#          export CODACY_PROJECT_NAME=spring-boot-example
+#          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r target/site/jacoco/jacoco.xml
+      - name: Pushing coverage reports to Codacy using Jar
         run: |
           export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
           export CODACY_ORGANIZATION_PROVIDER=gh
           export CODACY_USERNAME=jaime-barragan
           export CODACY_PROJECT_NAME=spring-boot-example
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r target/site/jacoco/jacoco.xml
+          export CODACY_REPORTER_VERSION=$(curl -L https://artifacts.codacy.com/bin/codacy-coverage-reporter/latest)
+          curl -OsS "https://artifacts.codacy.com/bin/codacy-coverage-reporter/$CODACY_REPORTER_VERSION/codacy-coverage-reporter-assembly.jar"
+          java -jar codacy-coverage-reporter-assembly.jar report -r target/site/jacoco/jacoco.xml
